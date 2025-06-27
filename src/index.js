@@ -22,11 +22,27 @@ async function get_temp(city, day) {
     return data.days[day].temp;
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
-    const form = document.querySelector("form.enter-city");
-    form.addEventListener("submit", async (e) => {
+document.addEventListener("DOMContentLoaded", () => {
+    const app = {}
+    setup_ui(app);
+    app.form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const data = new FormData(e.target);
-        console.log(await get_temp(data.get("city"), data.get("day")));
+        app.data.temp = await get_temp(data.get("city"), data.get("day"));
+        document.dispatchEvent(app.update_ui_event);
+    })
+    document.addEventListener("update_ui", () => {
+        update_ui(app);
     })
 })
+
+function setup_ui(app) {
+    app.data = {}
+    app.update_ui_event = new Event("update_ui");
+    app.form = document.querySelector("form.enter-city");
+    app.temp_p = document.querySelector("p.temp");
+}
+
+function update_ui(app) {
+    app.temp_p.textContent = app.data.temp;
+}
