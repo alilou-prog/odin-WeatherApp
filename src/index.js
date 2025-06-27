@@ -17,8 +17,16 @@ async function get_data(city) {
     return data;
 }
 
-function get_temp(data, day) {
+async function get_temp(city, day) {
+    const data = await get_data(city);
     return data.days[day].temp;
 }
 
-console.log(get_temp(await get_data("london"), 0))
+document.addEventListener("DOMContentLoaded", ()=>{
+    const form = document.querySelector("form.enter-city");
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = new FormData(e.target);
+        console.log(await get_temp(data.get("city"), data.get("day")));
+    })
+})
